@@ -1,24 +1,47 @@
-import type { Todo } from '../types'
+import { CATEGORIES, DEFAULT_CATEGORY, type Todo } from '../types'
 
-/** Versioned key: if the data shape ever changes, a new key avoids reading stale data. */
+/**
+ * Versioned key: if the data shape ever changes incompatibly, a new key avoids reading stale data.
+ * Adding the optional `category` field was backward compatible, so the key stays at v1.
+ */
 export const STORAGE_KEY = 'todo-list:v1'
 
-function isTodo(value: unknown): value is Todo {
+function isCategory(value: unknown): value is Todo['category'] {
+  return CATEGORIES.some((category) => category.value === value)
+}
+
+/**
+ * Validates one stored item and returns it in the current shape, or null if it is malformed.
+ * Items saved before categories existed have no `category` and become "not urgent".
+ */
+function parseTodo(value: unknown): Todo | null {
   if (typeof value !== 'object' || value === null) {
-    return false
+    return null
   }
 
   const candidate = value as Record<string, unknown>
+  const category = candidate.category === undefined ? DEFAULT_CATEGORY : candidate.category
 
-  return (
+  if (
     typeof candidate.id === 'string' &&
     candidate.id !== '' &&
     typeof candidate.text === 'string' &&
     candidate.text.trim() !== '' &&
     typeof candidate.completed === 'boolean' &&
+    isCategory(category) &&
     typeof candidate.createdAt === 'number' &&
     Number.isFinite(candidate.createdAt)
-  )
+  ) {
+    return {
+      id: candidate.id,
+      text: candidate.text,
+      completed: candidate.completed,
+      category,
+      createdAt: candidate.createdAt,
+    }
+  }
+
+  return null
 }
 
 /**
@@ -33,8 +56,11 @@ export function loadTodos(): Todo[] {
     }
 
     const parsed: unknown = JSON.parse(raw)
-    if (Array.isArray(parsed) && parsed.every(isTodo)) {
-      return parsed
+    if (Array.isArray(parsed)) {
+      const todos = parsed.map(parseTodo)
+      if (todos.every((todo) => todo !== null)) {
+        return todos
+      }
     }
 
     console.warn(`Ignoring malformed data in localStorage["${STORAGE_KEY}"]`)

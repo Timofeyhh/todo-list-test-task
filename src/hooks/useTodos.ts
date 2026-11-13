@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { loadTodos, saveTodos } from '../lib/todoStorage'
-import type { Todo } from '../types'
+import type { Todo, TodoCategory } from '../types'
 
 function createId(): string {
   // randomUUID exists only in secure contexts (HTTPS, localhost); fall back for plain HTTP.
@@ -19,11 +19,12 @@ export function useTodos() {
     saveTodos(todos)
   }, [todos])
 
-  function addTodo(text: string) {
+  function addTodo(text: string, category: TodoCategory) {
     const todo: Todo = {
       id: createId(),
       text,
       completed: false,
+      category,
       createdAt: Date.now(),
     }
     setTodos((current) => [todo, ...current])
@@ -35,6 +36,12 @@ export function useTodos() {
     )
   }
 
+  function setTodoCategory(id: string, category: TodoCategory) {
+    setTodos((current) =>
+      current.map((todo) => (todo.id === id ? { ...todo, category } : todo)),
+    )
+  }
+
   function deleteTodo(id: string) {
     setTodos((current) => current.filter((todo) => todo.id !== id))
   }
@@ -43,5 +50,5 @@ export function useTodos() {
     setTodos((current) => current.filter((todo) => !todo.completed))
   }
 
-  return { todos, addTodo, toggleTodo, deleteTodo, clearCompleted }
+  return { todos, addTodo, toggleTodo, setTodoCategory, deleteTodo, clearCompleted }
 }

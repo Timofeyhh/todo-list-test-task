@@ -1,86 +1,51 @@
 /* ---------- Design tokens ---------- */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
-  --color-bg: #f5f6f8;
+  --color-bg: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-hover: #f8f9fb;
-  --color-surface-muted: #f0f2f5;
-  --color-segment-active: #ffffff;
-  --color-border: #e4e7ec;
-  /* Control borders keep >= 3:1 contrast with the surface (WCAG 1.4.11). */
-  --color-border-strong: #868f9a;
-  --color-text: #111827;
-  --color-text-muted: #5b6474;
-  --color-accent: #0f766e;
-  --color-accent-hover: #0b5f58;
-  --color-accent-soft: #e6f2f1;
-  --color-accent-text: #0f766e;
-  --color-on-accent: #ffffff;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdecea;
-  --color-focus: #0f766e;
+  --color-ink: #0b0b0b;
+  --color-on-ink: #ffffff;
+  /* The only grey for secondary text: 6.8:1 on white (WCAG AA). */
+  --color-muted: #5b5b5b;
+  /* Hover colour of black buttons: clearly lighter, white text keeps 6.8:1. */
+  --color-ink-hover: var(--color-muted);
+  /* Decorative dividers between rows. Controls are outlined with --color-ink. */
+  --color-line: #e2e2e2;
+  /* Hover background of light controls. */
+  --color-wash: #f2f2f2;
 
-  --radius-sm: 7px;
-  --radius-md: 8px;
-  --radius-lg: 14px;
-  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 2px 8px rgb(16 24 40 / 0.04);
-  --shadow-segment: 0 1px 2px rgb(16 24 40 / 0.08), 0 0 0 1px var(--color-border);
-  --control-height: 2.5rem;
-  --segment-height: 2rem;
-  --card-padding: 1.25rem;
-  --ease-out: cubic-bezier(0.2, 0, 0, 1);
-  --duration-fast: 150ms;
-  --duration-base: 220ms;
+  --font-sans: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  font-family:
-    'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  --radius: 2px;
+  --gutter: 2.5rem;
+  --control-height: 3.25rem;
+  /* Minimum size of every interactive element. */
+  --target: 2.75rem;
+  --duration: 150ms;
+
+  font-family: var(--font-sans);
   font-size: 100%;
-  font-optical-sizing: auto;
   line-height: 1.5;
-  color: var(--color-text);
+  color: var(--color-ink);
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-size-adjust: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (max-width: 45rem) {
   :root {
-    --color-bg: #0f1115;
-    --color-surface: #171a20;
-    --color-surface-hover: #1c2027;
-    --color-surface-muted: #21262e;
-    --color-segment-active: #313844;
-    --color-border: #2a2f38;
-    --color-border-strong: #6b7480;
-    --color-text: #e9ecf0;
-    --color-text-muted: #a0a9b6;
-    --color-accent: #0f766e;
-    --color-accent-hover: #128278;
-    --color-accent-soft: #15302d;
-    --color-accent-text: #6fd3c8;
-    --color-danger: #f0877d;
-    --color-danger-soft: #3a1f1e;
-    --color-focus: #5ccfc3;
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-segment: 0 1px 2px rgb(0 0 0 / 0.35);
-  }
-}
-
-/* Larger targets on touch screens and narrow viewports. */
-@media (pointer: coarse), (max-width: 30rem) {
-  :root {
-    --control-height: 2.75rem;
-    --segment-height: 2.5rem;
+    --gutter: 1.5rem;
   }
 }
 
 @media (max-width: 30rem) {
   :root {
-    --card-padding: 1rem;
+    --gutter: 1rem;
+    --control-height: 3rem;
   }
 }
 
@@ -95,12 +60,13 @@
 body {
   margin: 0;
   min-width: 20rem;
-  min-height: 100vh;
   background-color: var(--color-bg);
 }
 
 h1,
-p {
+p,
+dl,
+dd {
   margin: 0;
 }
 
@@ -115,7 +81,7 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: 2px solid var(--color-ink);
   outline-offset: 2px;
 }
 
@@ -131,37 +97,152 @@ button {
   border: 0;
 }
 
-/* ---------- Layout ---------- */
+/* Small uppercase monospace captions. */
+.eyebrow,
+.todo-form__label,
+.stats__label,
+.site-footer {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
 
-.app {
+/* ---------- Page layout ---------- */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.container {
   width: 100%;
-  max-width: 36rem;
-  margin: 0 auto;
-  padding: clamp(2rem, 8vh, 5rem) 1rem 3rem;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-.app__header {
-  margin-bottom: 1.5rem;
+.layout {
+  display: grid;
+  flex: 1 0 auto;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 2.5rem;
+  padding-block: 2.5rem 3.5rem;
 }
 
-.app__title {
-  font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
-  font-weight: 650;
-  line-height: 1.2;
-  letter-spacing: -0.022em;
+@media (min-width: 45.0625rem) {
+  .layout {
+    /* 4 : 7 grid: a narrow info column and the main to-do area.
+       The minimum keeps both counters on one line on small tablets. */
+    grid-template-columns: minmax(15.5rem, 4fr) minmax(0, 7fr);
+    column-gap: clamp(2rem, 7vw - 1.5rem, 6rem);
+    padding-block: clamp(3rem, 8vh, 5.5rem) 6rem;
+  }
+
+  .intro {
+    position: sticky;
+    top: 2.5rem;
+    align-self: start;
+  }
 }
 
-.app__subtitle {
-  margin-top: 0.375rem;
-  color: var(--color-text-muted);
+/* ---------- Intro column ---------- */
+
+.intro__title {
+  margin-top: 1.25rem;
+  font-size: clamp(2.75rem, 1rem + 3.4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.intro__text {
+  max-width: 34ch;
+  margin-top: 1.5rem;
+  font-family: var(--font-mono);
   font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-muted);
 }
 
-.card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--color-ink);
+}
+
+.stats__item {
+  padding-top: 1rem;
+}
+
+.stats__item:first-child {
+  padding-right: 1.25rem;
+}
+
+.stats__item + .stats__item {
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--color-line);
+}
+
+.stats__value {
+  margin-top: 0.5rem;
+  font-size: 2.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Split of a counter by category: one line per category, number on the right. */
+.stats__split {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats__split-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Same square as in the group headings: filled = urgent, outlined = not urgent. */
+.stats__split-item::before {
+  content: '';
+  flex-shrink: 0;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border: 1.5px solid var(--color-ink);
+}
+
+.stats__split-item--urgent::before {
+  background-color: var(--color-ink);
+}
+
+.stats__split-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.stats__split-count {
+  color: var(--color-ink);
+  font-weight: 500;
 }
 
 /* ---------- Buttons ---------- */
@@ -170,49 +251,44 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  min-height: var(--control-height);
-  padding: 0 1rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  font-size: 0.9375rem;
+  gap: 0.75rem;
+  min-height: var(--target);
+  padding: 0 1.25rem;
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
   font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   white-space: nowrap;
   transition:
-    background-color var(--duration-fast) ease,
-    color var(--duration-fast) ease,
-    transform var(--duration-fast) ease;
-}
-
-.button:active {
-  transform: translateY(1px);
+    background-color var(--duration) ease,
+    border-color var(--duration) ease,
+    color var(--duration) ease;
 }
 
 .button--primary {
-  padding-left: 0.875rem;
-  background-color: var(--color-accent);
-  color: var(--color-on-accent);
+  flex-shrink: 0;
+  height: var(--control-height);
+  padding-inline: 1.75rem;
+  background-color: var(--color-ink);
+  color: var(--color-on-ink);
 }
 
 .button--primary:hover {
-  background-color: var(--color-accent-hover);
+  border-color: var(--color-ink-hover);
+  background-color: var(--color-ink-hover);
 }
 
-.button--ghost {
-  min-height: 2.25rem;
-  padding: 0 0.625rem;
-  /* Keeps the text aligned with the card edge, also when the footer wraps. */
-  margin-right: -0.625rem;
-  margin-left: auto;
+.button--outline {
   background-color: transparent;
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
+  color: var(--color-ink);
 }
 
-.button--ghost:hover {
-  background-color: var(--color-danger-soft);
-  color: var(--color-danger);
+.button--outline:hover {
+  background-color: var(--color-ink);
+  color: var(--color-on-ink);
 }
 
 .icon-button {
@@ -220,202 +296,296 @@ button {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: var(--control-height);
-  height: var(--control-height);
+  width: var(--target);
+  height: var(--target);
   padding: 0;
   border: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   background-color: transparent;
-  color: var(--color-text-muted);
+  color: var(--color-muted);
   transition:
-    background-color var(--duration-fast) ease,
-    color var(--duration-fast) ease,
-    transform var(--duration-fast) ease;
+    background-color var(--duration) ease,
+    color var(--duration) ease;
 }
 
-.icon-button:hover,
+.icon-button:hover {
+  background-color: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
 .icon-button:focus-visible {
-  background-color: var(--color-danger-soft);
-  color: var(--color-danger);
+  color: var(--color-ink);
 }
 
-.icon-button:active {
-  transform: scale(0.92);
+/* On hover or focus with the pointer the icon turns white on black. */
+.icon-button:hover:focus-visible {
+  color: var(--color-on-ink);
 }
 
 /* ---------- Form ---------- */
 
-.todo-form {
-  padding: var(--card-padding);
+/* The form and the list footer adapt to the width of this column,
+   not of the viewport: it is narrow both on phones and on small tablets. */
+.board {
+  min-width: 0;
+  container: board / inline-size;
 }
 
 .todo-form__label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 550;
+  margin-bottom: 0.75rem;
 }
 
+/* The input and the button are two separate rectangles in one row.
+   The gap leaves room for their focus rings, so nothing overlaps. */
 .todo-form__row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-/* The input takes all free space; when the row wraps on very narrow
-   screens, the button grows to the full width of its own line. */
-.todo-form__row .button {
-  flex: 1 0 auto;
+  gap: 0.75rem;
 }
 
 .todo-form__input {
-  flex: 999 1 11rem;
+  flex: 1 1 auto;
   min-width: 0;
-  min-height: var(--control-height);
-  padding: 0 0.75rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
+  height: var(--control-height);
+  padding: 0 1rem;
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius);
   background-color: var(--color-surface);
   /* 16px+ prevents iOS Safari from zooming in on focus. */
-  font-size: 1rem;
-  transition:
-    border-color var(--duration-fast) ease,
-    box-shadow var(--duration-fast) ease;
+  font-size: 1.0625rem;
 }
 
 .todo-form__input::placeholder {
-  color: var(--color-text-muted);
-  opacity: 0.9;
+  color: var(--color-muted);
+  opacity: 1;
 }
 
-.todo-form__input:hover {
-  border-color: var(--color-text-muted);
-}
-
+/* The ring is drawn over the border, inside the field: it stays flush with the
+   black button next to it and never overlaps the neighbouring control. */
 .todo-form__input:focus-visible {
-  outline: none;
-  border-color: var(--color-focus);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 22%, transparent);
+  outline: 2px solid var(--color-ink);
+  outline-offset: -2px;
 }
 
 .todo-form__input[aria-invalid='true'] {
-  border-color: var(--color-danger);
-}
-
-.todo-form__input[aria-invalid='true']:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 22%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-ink);
 }
 
 .todo-form__error {
-  margin-top: 0.5rem;
-  color: var(--color-danger);
-  font-size: 0.875rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.todo-form__error-mark {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* ---------- Category choice ---------- */
+
+.category {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.category__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.category__options {
+  display: flex;
+}
+
+/* Two joined rectangles; the checked one turns black.
+   The radio itself is invisible but stays focusable and clickable. */
+.category__option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--target);
+  padding: 0 1.125rem;
+  border: 1px solid var(--color-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duration) ease,
+    color var(--duration) ease;
+}
+
+.category__option:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.category__option:last-child {
+  margin-left: -1px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.category__option:hover {
+  background-color: var(--color-wash);
+}
+
+.category__option:has(:checked) {
+  background-color: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.category__option:has(:checked):hover {
+  background-color: var(--color-ink-hover);
+}
+
+.category__option:has(:focus-visible) {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.category__input {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+@container board (max-width: 28rem) {
+  .category__options {
+    flex: 1 1 100%;
+  }
+
+  .category__option {
+    flex: 1 1 0;
+  }
+
+  .todo-form__row {
+    flex-direction: column;
+  }
+
+  .button--primary {
+    width: 100%;
+  }
 }
 
 /* ---------- List section ---------- */
 
 .todo-section {
-  border-top: 1px solid var(--color-border);
-  border-bottom-left-radius: var(--radius-lg);
-  border-bottom-right-radius: var(--radius-lg);
+  margin-top: 2.5rem;
 }
 
 .todo-section:focus-visible {
-  outline-offset: -2px;
+  outline-offset: 6px;
 }
 
+/* Filters are text tabs on a black rule; the active one is underlined. */
 .filters {
   display: flex;
-  gap: 2px;
-  width: fit-content;
-  max-width: calc(100% - 2 * var(--card-padding));
-  margin: 0.875rem var(--card-padding);
-  padding: 3px;
-  border-radius: 10px;
-  background-color: var(--color-surface-muted);
+  flex-wrap: wrap;
+  column-gap: 1.75rem;
+  border-bottom: 1px solid var(--color-ink);
 }
 
 .filters__button {
+  position: relative;
   display: inline-flex;
-  flex: 1 1 auto;
   align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  min-width: 0;
-  min-height: var(--segment-height);
-  padding: 0 0.75rem;
+  gap: 0.4rem;
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0;
   border: 0;
-  border-radius: var(--radius-sm);
-  background-color: transparent;
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  white-space: nowrap;
-  transition:
-    background-color var(--duration-fast) ease,
-    color var(--duration-fast) ease,
-    box-shadow var(--duration-fast) ease;
-}
-
-.filters__button:hover {
-  color: var(--color-text);
-}
-
-.filters__button[aria-pressed='true'] {
-  background-color: var(--color-segment-active);
-  color: var(--color-text);
+  background: none;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
   font-weight: 600;
-  box-shadow: var(--shadow-segment);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color var(--duration) ease;
+}
+
+.filters__button:hover,
+.filters__button[aria-pressed='true'] {
+  color: var(--color-ink);
+}
+
+/* A border, not a background, so it stays visible in forced-colors mode. */
+.filters__button[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  border-bottom: 3px solid var(--color-ink);
 }
 
 .filters__count {
-  min-width: 1.25rem;
-  padding: 0 0.3125rem;
-  border-radius: 999px;
-  background-color: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.125rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
 }
 
-.filters__button[aria-pressed='true'] .filters__count {
-  background-color: var(--color-accent-soft);
-  color: var(--color-accent-text);
+/* ---------- Category groups ---------- */
+
+.todo-group + .todo-group {
+  margin-top: 1.25rem;
 }
 
-/* ---------- Empty state ---------- */
-
-.empty-state {
+/* Heading of a group: a small square (filled = urgent, outlined = not urgent), the name and a count. */
+.todo-group__title {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 2.25rem var(--card-padding) 2.5rem;
-  text-align: center;
-  animation: fade-in var(--duration-base) ease both;
+  gap: 0.625rem;
+  margin: 0;
+  padding-block: 1rem 0.75rem;
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.empty-state__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-bottom: 0.875rem;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  background-color: var(--color-surface-muted);
-  color: var(--color-text-muted);
+.todo-group__title::before {
+  content: '';
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1.5px solid var(--color-ink);
 }
 
-.empty-state__title {
-  font-weight: 600;
+.todo-group--urgent .todo-group__title::before {
+  background-color: var(--color-ink);
 }
 
-.empty-state__hint {
-  margin-top: 0.25rem;
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
+.todo-group__count {
+  color: var(--color-muted);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Todo item ---------- */
@@ -424,180 +594,192 @@ button {
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--color-border);
 }
 
 .todo-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
-  padding: 0 calc(var(--card-padding) - 0.5rem) 0 var(--card-padding);
-  transition: background-color var(--duration-fast) ease;
-  animation: item-enter var(--duration-base) var(--ease-out) both;
 }
 
 .todo-item + .todo-item {
-  border-top: 1px solid var(--color-border);
-}
-
-.todo-item:hover,
-.todo-item:has(:focus-visible) {
-  background-color: var(--color-surface-hover);
+  border-top: 1px solid var(--color-line);
 }
 
 .todo-item__main {
   display: flex;
   flex: 1 1 auto;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 1rem;
   min-width: 0;
-  padding: 0.8125rem 0;
+  padding-block: 1.125rem;
   cursor: pointer;
 }
 
+/* Custom look on a native checkbox: keyboard, screen readers and forms keep working.
+   The white check mark is invisible on the white box until the box turns black. */
 .todo-item__checkbox {
   flex-shrink: 0;
-  width: 1.25rem;
-  height: 1.25rem;
-  margin: 0.125rem 0 0;
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: 6px;
-  background-color: var(--color-surface);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3L12.5 5' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 0;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 0.0625rem 0 0;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius);
+  background: var(--color-surface)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2 7.5l3 3L12 3.5' fill='none' stroke='%23fff' stroke-width='1.75'/%3E%3C/svg%3E")
+    center / 0.875rem no-repeat;
   appearance: none;
   cursor: pointer;
   transition:
-    background-color var(--duration-fast) ease,
-    border-color var(--duration-fast) ease,
-    background-size var(--duration-base) var(--ease-out);
+    background-color var(--duration) ease,
+    box-shadow var(--duration) ease;
 }
 
-.todo-item__checkbox:hover {
-  border-color: var(--color-accent);
+.todo-item__main:hover .todo-item__checkbox {
+  box-shadow: inset 0 0 0 1px var(--color-ink);
 }
 
 .todo-item__checkbox:checked {
-  border-color: var(--color-accent);
-  background-color: var(--color-accent);
-  background-size: 0.875rem;
+  background-color: var(--color-ink);
 }
 
 .todo-item__text {
   flex: 1 1 auto;
   min-width: 0;
+  font-size: 1.0625rem;
+  line-height: 1.45;
   overflow-wrap: anywhere;
-  transition: color var(--duration-base) ease;
-}
-
-/* The strike-through is a 1px background line that grows from 0 to 100%,
-   so it draws smoothly and follows every wrapped line of the inline span. */
-.todo-item__label {
-  background-image: linear-gradient(currentColor, currentColor);
-  background-position: 0 58%;
-  background-repeat: no-repeat;
-  background-size: 0% 1px;
-  transition: background-size 300ms var(--ease-out);
+  text-decoration-thickness: 1px;
+  transition: color var(--duration) ease;
 }
 
 .todo-item--completed .todo-item__text {
-  color: var(--color-text-muted);
+  color: var(--color-muted);
+  text-decoration-line: line-through;
 }
 
-.todo-item--completed .todo-item__label {
-  background-size: 100% 1px;
+/* Two icon buttons side by side, centred on the first line of the task text. */
+.todo-item__actions {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 0.5rem;
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Empty state ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-block: 3rem 3.25rem;
+}
+
+.empty-state:first-child {
+  border-top: 1px solid var(--color-ink);
+}
+
+.empty-state:last-child {
+  border-bottom: 1px solid var(--color-ink);
+}
+
+.empty-state__title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.empty-state__hint {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* ---------- List footer ---------- */
 
 .todo-footer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.25rem 1rem;
-  min-height: 3.25rem;
-  padding: 0.375rem var(--card-padding);
-  border-top: 1px solid var(--color-border);
+  gap: 0.75rem 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-ink);
 }
 
 .todo-footer__count {
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Small screens ---------- */
+.todo-footer .button {
+  margin-left: auto;
+}
 
-@media (pointer: coarse), (max-width: 30rem) {
-  .button--ghost {
-    min-height: var(--control-height);
+/* In a narrow column the counter and the button don't fit on one line:
+   the button takes its own full-width line, like "Добавить". */
+@container board (max-width: 28rem) {
+  .todo-footer .button {
+    flex: 1 1 100%;
   }
 }
 
-@media (max-width: 30rem) {
+/* ---------- Page footer ---------- */
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-block: 1.75rem 2.25rem;
+  border-top: 1px solid var(--color-line);
+}
+
+/* ---------- Narrow phones ---------- */
+
+@media (max-width: 25rem) {
+  /* 16px is still enough to keep iOS Safari from zooming in. */
+  .todo-form__input {
+    padding-inline: 0.875rem;
+    font-size: 1rem;
+  }
+
   .filters {
-    width: auto;
-    max-width: none;
+    column-gap: 1rem;
   }
 
   .filters__button {
-    padding: 0 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
   }
 }
 
-/* Counts don't fit next to the labels on narrow phones; they stay in the
-   accessible name, and the footer still shows how many tasks are left. */
-@media (max-width: 25rem) {
-  .filters__count {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
-/* ---------- Animations ---------- */
-
-@keyframes item-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-}
+/* ---------- Motion and contrast preferences ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .button:active,
-  .icon-button:active {
-    transform: none;
   }
 }
 
-/* Windows high contrast mode drops background images:
-   use a real line-through and the native checkbox. */
+/* Windows high contrast mode replaces background colours:
+   fall back to the native checkbox so its state stays visible. */
 @media (forced-colors: active) {
-  .todo-item--completed .todo-item__label {
-    text-decoration: line-through;
-  }
-
   .todo-item__checkbox {
     appearance: auto;
+  }
+
+  .category__option:has(:checked) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
   }
 }
