@@ -1,0 +1,505 @@
+/* ---------- Design tokens ---------- */
+
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f3f5;
+  --color-segment-active: #ffffff;
+  --color-border: #e1e4e8;
+  /* Control borders keep >= 3:1 contrast with the surface (WCAG 1.4.11). */
+  --color-border-strong: #868f9a;
+  --color-text: #18202b;
+  --color-text-muted: #59626f;
+  --color-accent: #0f766e;
+  --color-accent-hover: #0b5f58;
+  --color-accent-soft: #e3f1ef;
+  --color-on-accent: #ffffff;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdeceb;
+  --color-focus: #0f766e;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 4px 16px rgb(16 24 40 / 0.06);
+  --control-height: 2.75rem;
+  --card-padding: 1.25rem;
+  --transition: 150ms ease;
+
+  font-family:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 100%;
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #101317;
+    --color-surface: #181c22;
+    --color-surface-muted: #20252d;
+    --color-segment-active: #353c47;
+    --color-border: #2b313a;
+    --color-border-strong: #6b7480;
+    --color-text: #e8ebef;
+    --color-text-muted: #a0a9b5;
+    --color-accent: #0f766e;
+    --color-accent-hover: #128278;
+    --color-accent-soft: #173431;
+    --color-danger: #f0877d;
+    --color-danger-soft: #3a1f1e;
+    --color-focus: #5ccfc3;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  }
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 20rem;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Layout ---------- */
+
+.app {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 6vw, 4rem) 1rem 3rem;
+}
+
+.app__header {
+  margin-bottom: 1.5rem;
+}
+
+.app__title {
+  font-size: clamp(1.625rem, 4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.app__subtitle {
+  margin-top: 0.375rem;
+  color: var(--color-text-muted);
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Buttons ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height);
+  padding: 0 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition);
+}
+
+.button--primary {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.button--primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.button--primary:active {
+  transform: translateY(1px);
+}
+
+.button--ghost {
+  padding: 0 0.75rem;
+  /* Keeps the text aligned with the card edge, also when the footer wraps. */
+  margin-right: -0.75rem;
+  margin-left: auto;
+  background-color: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.button--ghost:hover {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.button--ghost:active {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+  transform: translateY(1px);
+}
+
+.icon-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-text-muted);
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.icon-button:active {
+  transform: scale(0.94);
+}
+
+/* ---------- Form ---------- */
+
+.todo-form {
+  padding: var(--card-padding);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.todo-form__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.todo-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+/* The input takes all free space; when the row wraps on very narrow
+   screens, the button grows to the full width of its own line. */
+.todo-form__row .button {
+  flex: 1 0 auto;
+}
+
+.todo-form__input {
+  flex: 999 1 10rem;
+  min-width: 0;
+  min-height: var(--control-height);
+  padding: 0 0.875rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  /* 16px+ prevents iOS Safari from zooming in on focus. */
+  font-size: 1rem;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.todo-form__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+.todo-form__input:hover {
+  border-color: var(--color-text-muted);
+}
+
+.todo-form__input:focus-visible {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 30%, transparent);
+}
+
+.todo-form__input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.todo-form__input[aria-invalid='true']:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 25%, transparent);
+}
+
+.todo-form__error {
+  margin-top: 0.5rem;
+  color: var(--color-danger);
+  font-size: 0.9375rem;
+}
+
+/* ---------- List section ---------- */
+
+.todo-section {
+  padding-top: 1rem;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.todo-section:focus-visible {
+  outline-offset: -2px;
+}
+
+.filters {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0 var(--card-padding) 0.5rem;
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+}
+
+.filters__button {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-width: 0;
+  min-height: 2.5rem;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.filters__button:hover {
+  color: var(--color-text);
+}
+
+.filters__button[aria-pressed='true'] {
+  background-color: var(--color-segment-active);
+  color: var(--color-text);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.12);
+}
+
+.filters__count {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.empty-state {
+  padding: 2rem var(--card-padding) 2.25rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---------- Todo item ---------- */
+
+.todo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 calc(var(--card-padding) - 0.5rem) 0 var(--card-padding);
+  border-top: 1px solid var(--color-border);
+  transition: background-color var(--transition);
+}
+
+.todo-item:first-child {
+  border-top-color: transparent;
+}
+
+.todo-item:hover {
+  background-color: color-mix(in srgb, var(--color-surface-muted) 60%, transparent);
+}
+
+.todo-item__main {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.75rem 0;
+  cursor: pointer;
+}
+
+.todo-item__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.todo-item__checkbox {
+  flex-shrink: 0;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 0.0625rem 0 0;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 6px;
+  background-color: var(--color-surface);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.875rem;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition);
+}
+
+.todo-item__checkbox:hover {
+  border-color: var(--color-accent);
+}
+
+.todo-item__checkbox:checked {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 4.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.todo-item__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  transition: color var(--transition);
+}
+
+.todo-item--completed .todo-item__text {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.todo-item__date {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- Footer ---------- */
+
+.todo-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  min-height: 3.5rem;
+  padding: 0.375rem var(--card-padding);
+  border-top: 1px solid var(--color-border);
+}
+
+.todo-footer__count {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 30rem) {
+  :root {
+    --card-padding: 1rem;
+  }
+
+  .app__header {
+    margin-bottom: 1.25rem;
+  }
+
+  .filters__button {
+    min-height: var(--control-height);
+    font-size: 0.875rem;
+  }
+}
+
+/* Counts don't fit next to the labels on narrow phones; they stay in the
+   accessible name, and the footer still shows how many tasks are left. */
+@media (max-width: 25rem) {
+  .filters__count {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+
+  .button:active,
+  .icon-button:active {
+    transform: none;
+  }
+}
