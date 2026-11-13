@@ -98,10 +98,7 @@ export default function App() {
       <main className="container layout">
         <div className="intro">
           <p className="eyebrow">Тестовое задание · 2026</p>
-          <h1 className="intro__title">Что делаем сегодня?</h1>
-          <p className="intro__text">
-            Запишите дела на сегодня и отметьте, какие из них срочные. Остальные подождут.
-          </p>
+          <h1 className="intro__title">Список задач</h1>
           <dl className="stats">
             <StatsItem label="Активные" total={activeCount} byCategory={countByCategory(activeTodos)} />
             <StatsItem
