@@ -1,5 +1,4 @@
-import { useId } from 'react'
-import { formatCreatedAt } from '../lib/format'
+import { useId, useRef } from 'react'
 import type { Todo } from '../types'
 
 interface TodoItemProps {
@@ -8,13 +7,42 @@ interface TodoItemProps {
   onDelete: (todo: Todo) => void
 }
 
+function prefersReducedMotion(): boolean {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+}
+
 export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
   const checkboxId = useId()
-  const dateId = useId()
+  const itemRef = useRef<HTMLLIElement>(null)
+  const isRemoving = useRef(false)
   const className = todo.completed ? 'todo-item todo-item--completed' : 'todo-item'
 
+  // Plays a short collapse animation, then removes the task.
+  // Without animation support (tests, old browsers) or with reduced motion
+  // the task is removed immediately.
+  function handleDelete() {
+    if (isRemoving.current) return
+    isRemoving.current = true
+
+    const item = itemRef.current
+    if (!item || typeof item.animate !== 'function' || prefersReducedMotion()) {
+      onDelete(todo)
+      return
+    }
+
+    item.style.overflow = 'hidden'
+    const animation = item.animate(
+      [
+        { opacity: 1, height: `${item.offsetHeight}px` },
+        { opacity: 0, height: '0px', paddingTop: '0px', paddingBottom: '0px', borderTopWidth: '0px' },
+      ],
+      { duration: 200, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
+    )
+    animation.finished.catch(() => undefined).then(() => onDelete(todo))
+  }
+
   return (
-    <li className={className}>
+    <li ref={itemRef} className={className}>
       {/* The whole label is a large click/tap target for the checkbox. */}
       <label className="todo-item__main" htmlFor={checkboxId}>
         <input
@@ -23,33 +51,24 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
           type="checkbox"
           checked={todo.completed}
           onChange={() => onToggle(todo)}
-          aria-describedby={dateId}
         />
-        <span className="todo-item__content">
-          <span className="todo-item__text">{todo.text}</span>
-          {/* Hidden from the checkbox name (name = task text), announced as its description instead. */}
-          <time
-            id={dateId}
-            className="todo-item__date"
-            dateTime={new Date(todo.createdAt).toISOString()}
-            aria-hidden="true"
-          >
-            Создана {formatCreatedAt(todo.createdAt)}
-          </time>
+        <span className="todo-item__text">
+          {/* Inline span so the strike-through line follows every wrapped line. */}
+          <span className="todo-item__label">{todo.text}</span>
         </span>
       </label>
       <button
         className="icon-button todo-item__delete"
         type="button"
-        onClick={() => onDelete(todo)}
+        onClick={handleDelete}
         aria-label={`Удалить задачу «${todo.text}»`}
         title="Удалить задачу"
       >
         <svg
           aria-hidden="true"
           focusable="false"
-          width="20"
-          height="20"
+          width="18"
+          height="18"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"

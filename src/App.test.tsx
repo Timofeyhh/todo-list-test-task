@@ -101,7 +101,7 @@ describe('App', () => {
     expect(screen.getByRole('checkbox', { name: 'Готовая' })).toBeChecked()
 
     await user.click(screen.getByRole('button', { name: 'Удалить выполненные' }))
-    expect(screen.getByText('Выполненных задач пока нет.')).toBeInTheDocument()
+    expect(screen.getByText('Выполненных задач нет')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Удалить выполненные' })).not.toBeInTheDocument()
     expect(readStoredTodos().map((todo) => todo.text)).toEqual(['Активная'])
   })
@@ -141,7 +141,7 @@ describe('App', () => {
 
     const { user } = renderApp()
 
-    expect(screen.getByText(/Задач пока нет/)).toBeInTheDocument()
+    expect(screen.getByText('Задач пока нет')).toBeInTheDocument()
     await addTodo(user, 'Новая задача после сбоя')
     expect(screen.getByRole('checkbox', { name: 'Новая задача после сбоя' })).toBeInTheDocument()
   })

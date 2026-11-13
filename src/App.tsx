@@ -4,12 +4,12 @@ import { TodoForm } from './components/TodoForm'
 import { TodoList } from './components/TodoList'
 import { useTodos } from './hooks/useTodos'
 import { formatRemaining } from './lib/format'
-import type { Todo, TodoFilter } from './types'
+import type { EmptyMessage, Todo, TodoFilter } from './types'
 
-const EMPTY_MESSAGES: Record<TodoFilter, string> = {
-  all: 'Задач пока нет. Добавьте первую — она сохранится даже после перезагрузки страницы.',
-  active: 'Активных задач нет — всё сделано.',
-  completed: 'Выполненных задач пока нет.',
+const EMPTY_MESSAGES: Record<TodoFilter, EmptyMessage> = {
+  all: { title: 'Задач пока нет', hint: 'Добавьте первую задачу — она сохранится в браузере' },
+  active: { title: 'Активных задач нет', hint: 'Всё сделано — можно добавить новую задачу' },
+  completed: { title: 'Выполненных задач нет', hint: 'Отметьте задачу, когда закончите её' },
 }
 
 export default function App() {
@@ -64,7 +64,7 @@ export default function App() {
     <main className="app">
       <header className="app__header">
         <h1 className="app__title">Список задач</h1>
-        <p className="app__subtitle">Задачи хранятся в этом браузере и не пропадают после перезагрузки.</p>
+        <p className="app__subtitle">Простой список, который остаётся после перезагрузки</p>
       </header>
 
       <div className="card">
